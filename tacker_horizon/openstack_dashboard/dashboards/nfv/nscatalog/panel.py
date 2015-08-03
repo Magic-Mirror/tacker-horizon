@@ -16,18 +16,11 @@
 from django.utils.translation import ugettext_lazy as _
 
 import horizon
+from tacker_horizon.openstack_dashboard.dashboards.nfv import dashboard
 
-class Nfvgroup(horizon.PanelGroup):
-    slug = "nfvgroup"
-    name = _("VNF Management")
-    panels = ('vnfcatalog', 'vnfmanager', 'nscatalog')
-
-
-class Nfv(horizon.Dashboard):
-    name = _("NFV")
-    slug = "nfv"
-    panels = (Nfvgroup,)  # Add your panels here.
-    default_panel = 'vnfcatalog'  # Specify the slug of the dashboard's default panel.
+class Nscatalog(horizon.Panel):
+    name = _("NS Catalog")
+    slug = "nscatalog"
 
 
-horizon.register(Nfv)
+dashboard.Nfv.register(Nscatalog)

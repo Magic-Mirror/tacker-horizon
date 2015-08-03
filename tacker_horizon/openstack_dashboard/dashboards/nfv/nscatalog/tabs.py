@@ -21,7 +21,7 @@ from horizon import exceptions
 from horizon import tabs
 
 from tacker_horizon.openstack_dashboard import api
-from tacker_horizon.openstack_dashboard.dashboards.nfv.vnfcatalog import tables
+from tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog import tables
 
 
 class VNFCatalogItem(object):

@@ -16,7 +16,7 @@
 from django.conf.urls import patterns
 from django.conf.urls import url
 
-from tacker_horizon.openstack_dashboard.dashboards.nfv.vnfcatalog import views
+from tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog import views
 
 
 urlpatterns = patterns(

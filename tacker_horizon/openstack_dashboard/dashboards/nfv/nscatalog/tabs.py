@@ -24,51 +24,51 @@ from tacker_horizon.openstack_dashboard import api
 from tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog import tables
 
 
-class VNFCatalogItem(object):
-    def __init__(self, name, description, services, vnfd_id):
-        self.id = vnfd_id
+class NSCatalogItem(object):
+    def __init__(self, name, description, services, sfc_id):
+        self.id = sfc_id
         self.name = name
         self.description = description
         self.services = services
 
 
-class VNFCatalogTab(tabs.TableTab):
-    name = _("VNFCatalog Tab")
-    slug = "vnfcatalog_tab"
-    table_classes = (tables.VNFCatalogTable,)
+class NSCatalogTab(tabs.TableTab):
+    name = _("NSCatalog Tab")
+    slug = "nscatalog_tab"
+    table_classes = (tables.NSCatalogTable,)
     template_name = ("horizon/common/_detail_table.html")
     preload = False
 
     def has_more_data(self, table):
         return self._has_more
 
-    def get_vnfcatalog_data(self):
+    def get_nscatalog_data(self):
         try:
             # marker = self.request.GET.get(
             #            tables.VNFCatalogTable._meta.pagination_param, None)
 
             self._has_more = False
             instances = []
-            print "VNFD list API"
-            vnfds = api.tacker.vnfd_list(self.request)
-            print "VNFDs: " + str(vnfds)
-            for vnfd in vnfds:
-                print "VNFD entry " + str(vnfd)
-                print "VNFD name " + vnfd['name']
-                print "VNFD id " + vnfd['id']
-                print "VNFD desc " + vnfd['description']
-                services = vnfd['service_types']
-                print "VNFD Services: " + str(services)
-                vnfd_services =[]
+            print "SFC list API"
+            sfcs = api.tacker.sfc_list(self.request)
+            print "SFCs: " + str(vnfds)
+            for sfc in sfcs:
+                print "SFC entry " + str(sfc)
+                print "SFC name " + sfc['name']
+                print "SFC id " + sfc['id']
+                print "SFC desc " + sfc['description']
+                services = sfc['service_types']
+                print "SFC Services: " + str(services)
+                sfc_services =[]
                 for s in services:
                     print "Serv:" + str(s)
-                    if s['service_type'] != 'vnfd':
+                    if s['service_type'] != 'sfc':
                         vnfd_services.append(s['service_type'])
-                print "VNFDService: " + str(vnfd_services)
-                vnfds_services_string = ""
-                if len(vnfd_services) > 0:
-                    vnfds_services_string = ', '.join([str(item) for item in vnfd_services])
-                item = VNFCatalogItem(vnfd['name'], vnfd['description'], vnfds_services_string, vnfd['id'])
+                print "SFCService: " + str(sfc_services)
+                sfcs_services_string = ""
+                if len(sfc_services) > 0:
+                    sfcs_services_string = ', '.join([str(item) for item in sfc_services])
+                item = NSCatalogItem(sfc['name'], sfc['description'], sfcs_services_string, sfc['id'])
                 instances.append(item)
             print "Instances: " + str(instances)
             return instances
@@ -80,7 +80,7 @@ class VNFCatalogTab(tabs.TableTab):
             return []
 
 
-class VNFCatalogTabs(tabs.TabGroup):
-    slug = "vnfcatalog_tabs"
-    tabs = (VNFCatalogTab,)
+class NSCatalogTabs(tabs.TabGroup):
+    slug = "nscatalog_tabs"
+    tabs = (NSCatalogTab,)
     sticky = True

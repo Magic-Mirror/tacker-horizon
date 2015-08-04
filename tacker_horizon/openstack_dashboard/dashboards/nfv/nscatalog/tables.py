@@ -49,10 +49,10 @@ class OnBoardSFCLink(tables.LinkAction):
     verbose_name = _("Create SFC")
     classes = ("ajax-modal",)
     icon = "plus"
-    url = "horizon:nfv:vnfcatalog:onboardvnf"
+    url = "horizon:nfv:nscatalog:onboardsfc"
 
 
-class VNFCatalogTable(tables.DataTable):
+class NSCatalogTable(tables.DataTable):
     name = tables.Column('name', \
                          verbose_name=_("Name"))
     description = tables.Column('description', \
@@ -63,6 +63,6 @@ class VNFCatalogTable(tables.DataTable):
                          verbose_name=_("Catalog Id"))
 
     class Meta:
-        name = "vnfcatalog"
-        verbose_name = _("VNFCatalog")
-        table_actions = (OnBoardVNFLink, DeleteVNFLink, MyFilterAction,)
+        name = "nscatalog"
+        verbose_name = _("NSCatalog")
+        table_actions = (OnBoardSFCLink, DeleteSFCLink, MyFilterAction,)

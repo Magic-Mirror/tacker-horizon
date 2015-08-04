@@ -26,15 +26,15 @@ from horizon.utils import memoized
 from openstack_dashboard import api
 
 from tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog \
-    import tabs as nfv_tabs
+    import tabs as sfc_tabs
 
 from tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog \
     import forms as project_forms
 
 class IndexView(tabs.TabbedTableView):
     # A very simple class-based view...
-    tab_group_class = nfv_tabs.VNFCatalogTabs
-    template_name = 'nfv/vnfcatalog/index.html'
+    tab_group_class = sfc_tabs.NSCatalogTabs
+    template_name = 'nfv/nscatalog/index.html'
 
     def get_data(self, request, context, *args, **kwargs):
         # Add data to the context here...
@@ -64,7 +64,7 @@ class CreateSFCView(forms.ModalFormView):
         return {}
 
     def get_context_data(self, **kwargs):
-        context = super(OnBoardVNFView, self).get_context_data(**kwargs)
+        context = super(CreateSFCView, self).get_context_data(**kwargs)
         # instance_id = self.kwargs['instance_id']
         #context['instance_id'] = instance_id
         # context['instance'] = self.get_object()

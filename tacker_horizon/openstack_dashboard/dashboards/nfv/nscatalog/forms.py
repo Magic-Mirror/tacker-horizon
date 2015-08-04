@@ -48,7 +48,7 @@ class CreateSFC(forms.SelfHandlingForm):
         label=_('Create SFC from VNFs'),
         help_text=_('Select VNFs to chain together'),
         choices=[('dummyVNF1', 'dummyVNF1')],
-        widget=forms.widgets.ChoiceField(
+        widget=forms.Select(
             attrs={'class': 'switched', 'data-switch-on': 'source',
                    'data-source-raw': _('TOSCA YAML')}),
         required=False)

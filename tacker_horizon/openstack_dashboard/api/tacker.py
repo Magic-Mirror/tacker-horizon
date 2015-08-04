@@ -91,3 +91,20 @@ def delete_vnf(request, vnf_id):
 def delete_vnfd(request, vnfd_id):
     LOG.debug("delete_vnfd():vnfd_id=%s",str(vnfd_id))
     tackerclient(request).delete_vnfd(vnfd_id)
+
+def delete_sfc(request, sfc_id):
+    LOG.debug("delete_sfc():sfc_id=%s",str(sfc_id))
+    pass
+#    tackerclient(request).delete_vnf(vnf_id)
+
+def create_sfc(request, sfc_id):
+    LOG.debug("delete_sfc():sfc_id=%s",str(sfc_id))
+    pass
+
+def sfc_list(request, **params):
+    LOG.debug("sfc_list(): params=%s", params)
+    #vnfs = tackerclient(request).list_vnfs(**params).get('vnfs')
+    sfcs = 'dummyApi'
+    print "API.Tacker SFCs::" + str(sfcs)
+    #return sfcs
+    pass

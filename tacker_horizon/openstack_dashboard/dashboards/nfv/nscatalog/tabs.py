@@ -51,7 +51,7 @@ class NSCatalogTab(tabs.TableTab):
             instances = []
             print "SFC list API"
             sfcs = api.tacker.sfc_list(self.request)
-            print "SFCs: " + str(vnfds)
+            print "SFCs: " + str(sfcs)
             for sfc in sfcs:
                 print "SFC entry " + str(sfc)
                 print "SFC name " + sfc['name']
@@ -63,7 +63,7 @@ class NSCatalogTab(tabs.TableTab):
                 for s in services:
                     print "Serv:" + str(s)
                     if s['service_type'] != 'sfc':
-                        vnfd_services.append(s['service_type'])
+                        sfc_services.append(s['service_type'])
                 print "SFCService: " + str(sfc_services)
                 sfcs_services_string = ""
                 if len(sfc_services) > 0:

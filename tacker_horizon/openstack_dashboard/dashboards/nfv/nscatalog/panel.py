@@ -19,7 +19,7 @@ import horizon
 from tacker_horizon.openstack_dashboard.dashboards.nfv import dashboard
 
 class Nscatalog(horizon.Panel):
-    name = _("NS Catalog")
+    name = _("Service Function Chaining")
     slug = "nscatalog"
 
 

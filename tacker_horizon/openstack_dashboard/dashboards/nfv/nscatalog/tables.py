@@ -45,11 +45,11 @@ class DeleteSFCLink(policy.PolicyTargetMixin, tables.DeleteAction):
         api.tacker.delete_sfc(request,obj_id)
 
 class OnBoardSFCLink(tables.LinkAction):
-    name = "onboardsfc"
+    name = "createsfc"
     verbose_name = _("Create SFC")
     classes = ("ajax-modal",)
     icon = "plus"
-    url = "horizon:nfv:nscatalog:onboardsfc"
+    url = "horizon:nfv:nscatalog:createsfc"
 
 
 class NSCatalogTable(tables.DataTable):

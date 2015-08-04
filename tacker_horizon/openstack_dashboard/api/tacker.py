@@ -104,7 +104,8 @@ def create_sfc(request, sfc_id):
 def sfc_list(request, **params):
     LOG.debug("sfc_list(): params=%s", params)
     #vnfs = tackerclient(request).list_vnfs(**params).get('vnfs')
-    sfcs = 'dummyApi'
+    chain1 = {'service_type': 'sfc'}
+    dummySFC1 = {'name': 'sfc1', 'id': '1', 'description': 'sfc1', 'service_types': [chain1, ]}
+    sfcs = [dummySFC1, ]
     print "API.Tacker SFCs::" + str(sfcs)
-    #return sfcs
-    pass
+    return sfcs

@@ -28,6 +28,7 @@ import yaml
 
 class CreateSFC(forms.SelfHandlingForm):
     name = forms.CharField(max_length=80, label=_("Name"), required=False)
+
     source_type = forms.ChoiceField(
         label=_('VNFFG Source'),
         required=False,
@@ -47,37 +48,59 @@ class CreateSFC(forms.SelfHandlingForm):
     vnf1 = forms.ChoiceField(
         label=_('Create SFC from VNFs'),
         help_text=_('Select VNFs to chain together'),
-        choices=[('dummyVNF1', 'dummyVNF1')],
+        choices=[('dummyVNF1', 'dummyVNF1'),
+                 ('dummyVNF2', 'dummyVNF2')],
         widget=forms.Select(
             attrs={'class': 'switched', 'data-switch-on': 'source',
-                   'data-source-raw': _('TOSCA YAML')}),
+                   'data-source-raw': _('VNF1')}),
+        required=False)
+
+    vnf2 = forms.ChoiceField(
+        label=_('Create SFC from VNFs'),
+        help_text=_('Select VNFs to chain together'),
+        choices=[('dummyVNF1', 'dummyVNF1'),
+                 ('dummyVNF2', 'dummyVNF2')],
+        widget=forms.Select(
+            attrs={'class': 'switched', 'data-switch-on': 'source',
+                   'data-source-raw': _('VNF2')}),
         required=False)
 
 
     def __init__(self, request, *args, **kwargs):
         super(CreateSFC, self).__init__(request, *args, **kwargs)
 
+        try:
+            vnf_list = api.tacker.vnf_list(request)
+            available_choices = [(vnf['id'],vnf['name'])
+                                 for vnf in vnf_list]
+        except Exception as e:
+            msg = _('Failed to retrieve available VNF Instances: %s') % e
+            LOG.error(msg)
+
+        self.fields['vnf1'].choices = [('', _('Select a VNF Instance Name'))
+                                          ]+available_choices
+        self.fields['vnf2'].choices = [('', _('Select a VNF Instance Name'))
+                                          ]+available_choices
     def clean(self):
         data = super(CreateSFC, self).clean()
 
         # The key can be missing based on particular upload
         # conditions. Code defensively for it here...
         toscal_file = data.get('toscal_file', None)
-        toscal_raw = data.get('direct_input', None)
+        sfc_chain = [data.get(vnf_field, None) for vnf_field in ['vnf1', 'vnf2']]
 
-        if toscal_raw and toscal_file:
+        if sfc_chain and toscal_file:
             raise ValidationError(
-                _("Cannot specify both file and direct input."))
-        if not toscal_raw and not toscal_file:
+                _("Cannot specify both file and direct chain."))
+        if not sfc_chain and not toscal_file:
             raise ValidationError(
                 _("No input was provided for the namespace content."))
         try:
             if toscal_file:
                 toscal_str = self.files['toscal_file'].read()
+                data['tosca'] = toscal_str
             else:
-                toscal_str = data['direct_input']
-            #toscal = yaml.loads(toscal_str)
-            data['tosca'] = toscal_str
+                data = sfc_chain
         except Exception as e:
             msg = _('There was a problem loading the namespace: %s.') % e
             raise forms.ValidationError(msg)
@@ -86,17 +109,18 @@ class CreateSFC(forms.SelfHandlingForm):
 
     def handle(self, request, data):
         try:
-            toscal = data['tosca']
-            print "VNFD TOSCA: " + toscal
-            tosca_arg = { 'vnfd': {'vnfd': toscal}}
-            vnfd_instance = api.tacker.create_vnfd(request, tosca_arg)
-            print "VNFD Instance: " + str(vnfd_instance)
-            print "VNFD name: " + vnfd_instance['vnfd']['name']
-            messages.success(request,
-                             _('VNF Catalog entry %s has been created.') % vnfd_instance['vnfd']['name'])
-            return toscal
+            if 'tosca' in data:
+                print "Inside TOSCA for SFC.  Does not work yet: "
+                messages.success(request,
+                                _('This does not work yet.'))
+            else:
+                # Passes vnf IDs to create sfc
+                # Order of list determines chain order
+                api.tacker.create_sfc(request, data)
+                messages.success(request,
+                             _('SFC has been created.'))
+            return True
         except Exception as e:
-            msg = _('Unable to create TOSCA. %s')
-            msg %= e.message.split('Failed validating', 1)[0]
-            exceptions.handle(request, message=msg)
+            exceptions.handle(request,
+                              _('Unable to create SFC.'))
             return False

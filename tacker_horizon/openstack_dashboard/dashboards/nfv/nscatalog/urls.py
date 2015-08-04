@@ -22,5 +22,5 @@ from tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog import views
 urlpatterns = patterns(
     'tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog.views',
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^createsfc', views.CreateSFCView.as_view(), name='createsfc'),
+    url(r'^createsfc$', views.CreateSFCView.as_view(), name='createsfc'),
 )

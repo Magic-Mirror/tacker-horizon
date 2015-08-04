@@ -44,7 +44,7 @@ class IndexView(tabs.TabbedTableView):
 class CreateSFCView(forms.ModalFormView):
     form_class = project_forms.CreateSFC
     template_name = 'nfv/nscatalog/createsfc.html'
-    success_url = reverse_lazy("horizon:nfv:createsfc:index")
+    success_url = reverse_lazy("horizon:nfv:nscatalog:index")
     modal_id = "createsfc_modal"
     modal_header = _("Create SFC")
     submit_label = _("Create SFC")

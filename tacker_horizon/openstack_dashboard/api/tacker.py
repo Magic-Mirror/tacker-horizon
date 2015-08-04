@@ -93,17 +93,17 @@ def delete_vnfd(request, vnfd_id):
     tackerclient(request).delete_vnfd(vnfd_id)
 
 def delete_sfc(request, sfc_id):
-    LOG.debug("delete_sfc():sfc_id=%s",str(sfc_id))
+    LOG.debug("delete_sfc():sfc_id=%s", str(sfc_id))
     pass
 #    tackerclient(request).delete_vnf(vnf_id)
 
-def create_sfc(request, sfc_id):
-    LOG.debug("delete_sfc():sfc_id=%s",str(sfc_id))
+def create_sfc(request, vnf_id_list):
+    LOG.debug("create_sfc():vnf_id_list=%s", str(vnf_id_list))
     pass
 
 def sfc_list(request, **params):
     LOG.debug("sfc_list(): params=%s", params)
-    #vnfs = tackerclient(request).list_vnfs(**params).get('vnfs')
+    # vnfs = tackerclient(request).list_vnfs(**params).get('vnfs')
     chain1 = {'service_type': 'sfc'}
     dummySFC1 = {'name': 'sfc1', 'id': '1', 'description': 'sfc1', 'service_types': [chain1, ]}
     sfcs = [dummySFC1, ]

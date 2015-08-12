@@ -100,7 +100,7 @@ class CreateSFC(forms.SelfHandlingForm):
                 toscal_str = self.files['toscal_file'].read()
                 data['tosca'] = toscal_str
             else:
-                data = sfc_chain
+                data['sfc'] = sfc_chain
         except Exception as e:
             msg = _('There was a problem loading the namespace: %s.') % e
             raise forms.ValidationError(msg)
@@ -114,9 +114,11 @@ class CreateSFC(forms.SelfHandlingForm):
                 messages.success(request,
                                 _('This does not work yet.'))
             else:
+                sfc_data = data['sfc']
+                sfc_arg = {'sfc': {'sfc': sfc_data}}
                 # Passes vnf IDs to create sfc
                 # Order of list determines chain order
-                api.tacker.create_sfc(request, data)
+                api.tacker.create_sfc(request, sfc_arg)
                 messages.success(request,
                              _('SFC has been created.'))
             return True

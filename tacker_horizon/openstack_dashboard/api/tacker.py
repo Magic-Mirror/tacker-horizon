@@ -97,9 +97,11 @@ def delete_sfc(request, sfc_id):
     pass
 #    tackerclient(request).delete_vnf(vnf_id)
 
-def create_sfc(request, vnf_id_list):
-    LOG.debug("create_sfc():vnf_id_list=%s", str(vnf_id_list))
-    pass
+def create_sfc(request, sfc_dict):
+    LOG.debug("create_sfc():sfc_dict=%s", str(sfc_dict))
+    sfc_chain = tackerclient(request).create_sfc(body=sfc_dict)
+    print "API.Tacker SFC Instance: " + str(sfc_chain)
+    return sfc_chain
 
 def sfc_list(request, **params):
     LOG.debug("sfc_list(): params=%s", params)

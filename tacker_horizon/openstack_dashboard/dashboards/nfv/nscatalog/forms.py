@@ -71,7 +71,7 @@ class CreateSFC(forms.SelfHandlingForm):
 
         try:
             vnf_list = api.tacker.vnf_list(request)
-            available_choices = [(vnf['id'],vnf['name'])
+            available_choices = [(vnf['id'], vnf['name'])
                                  for vnf in vnf_list]
         except Exception as e:
             msg = _('Failed to retrieve available VNF Instances: %s') % e
@@ -114,8 +114,18 @@ class CreateSFC(forms.SelfHandlingForm):
                 messages.success(request,
                                 _('This does not work yet.'))
             else:
+                # this is a list of vnf ids
                 sfc_data = data['sfc']
-                sfc_arg = {'sfc': {'sfc': sfc_data}}
+                # Need to pass IP of node, and service type
+                sfc_dict = dict()
+                for vnf in sfc_data:
+                    vnf_show_dict = api.tacker.get_vnf(request, vnf)
+                    sfc_dict[vnf] = dict()
+                    sfc_dict[vnf]['ip'] = vnf_show_dict['mgmt_url']
+                    # trozet check here to see how services are passed
+                    # we can only specify 1 atm for ODL
+                    #sfc_dict[vnf]['type'] = vnf_show_dict['services']
+                sfc_arg = {'sfc': sfc_dict}
                 # Passes vnf IDs to create sfc
                 # Order of list determines chain order
                 api.tacker.create_sfc(request, sfc_arg)

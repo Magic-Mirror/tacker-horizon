@@ -49,6 +49,22 @@ def tackerclient(request):
                              insecure=insecure, ca_cert=cacert)
     return c
 
+def neutronclient(request):
+    insecure = getattr(settings, 'OPENSTACK_SSL_NO_VERIFY', False)
+    cacert = getattr(settings, 'OPENSTACK_SSL_CACERT', None)
+    c = neutron_client.Client(token=request.user.token.id,
+                              auth_url=base.url_for(request, 'identity'),
+                              endpoint_url=base.url_for(request, 'network'),
+                              insecure=insecure, ca_cert=cacert)
+    return c
+
+
+def list_neutron_ports(request):
+    LOG.debug("list_ports()", )
+    port_info = neutronclient(request).list_ports()
+    print "API.Tacker Neutron Port List::" + str(port_info)
+    return port_info
+
 
 def vnf_list(request, **params):
     LOG.debug("vnf_list(): params=%s", params)

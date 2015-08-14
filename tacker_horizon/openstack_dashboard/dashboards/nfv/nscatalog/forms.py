@@ -24,7 +24,7 @@ from horizon import messages
 from tacker_horizon.openstack_dashboard import api
 
 import yaml
-
+import re
 
 class CreateSFC(forms.SelfHandlingForm):
     name = forms.CharField(max_length=80, label=_("Name"), required=False)
@@ -117,14 +117,26 @@ class CreateSFC(forms.SelfHandlingForm):
                 # this is a list of vnf ids
                 sfc_data = data['sfc']
                 # Need to pass IP of node, and service type
+                # may also need to get neutron port id
                 sfc_dict = dict()
                 for vnf in sfc_data:
-                    vnf_show_dict = api.tacker.get_vnf(request, vnf)
+                    vnf_result = api.tacker.get_vnf(request, vnf)
+                    vnf_data = vnf_result['vnf']
                     sfc_dict[vnf] = dict()
-                    sfc_dict[vnf]['ip'] = vnf_show_dict['mgmt_url']
+                    # find IP in mgmt_url string
+                    sfc_dict[vnf]['ip'] = re.search(r'[0-9]+(?:\.[0-9]+){3}', vnf_data['mgmt_url']).group()
                     # trozet check here to see how services are passed
                     # we can only specify 1 atm for ODL
-                    #sfc_dict[vnf]['type'] = vnf_show_dict['services']
+                    sfc_dict[vnf]['type'] = vnf_data['attributes']['service_type']
+                    # we also need the neutron port ID
+                    # tacker doesnt find this so we can use the vnf id to find the
+                    # neutron port as it is listed in the name
+                    port_output = api.tacker.list_neutron_ports(request)
+                    for port in port_output['ports']:
+                        if port['name'].find(vnf_data['id']) > 0:
+                            sfc_dict[vnf]['neutron_port_id'] = port['id']
+                    if 'neutron_port_id' not in sfc_dict[vnf]:
+                        raise KeyError('Unable to find neutron_port_id')
                 sfc_arg = {'sfc': sfc_dict}
                 # Passes vnf IDs to create sfc
                 # Order of list determines chain order

@@ -49,6 +49,22 @@ def tackerclient(request):
                              insecure=insecure, ca_cert=cacert)
     return c
 
+def neutronclient(request):
+    insecure = getattr(settings, 'OPENSTACK_SSL_NO_VERIFY', False)
+    cacert = getattr(settings, 'OPENSTACK_SSL_CACERT', None)
+    c = neutron_client.Client(token=request.user.token.id,
+                              auth_url=base.url_for(request, 'identity'),
+                              endpoint_url=base.url_for(request, 'network'),
+                              insecure=insecure, ca_cert=cacert)
+    return c
+
+
+def list_neutron_ports(request):
+    LOG.debug("list_ports()", )
+    port_info = neutronclient(request).list_ports()
+    print "API.Tacker Neutron Port List::" + str(port_info)
+    return port_info
+
 
 def vnf_list(request, **params):
     LOG.debug("vnf_list(): params=%s", params)
@@ -86,3 +102,23 @@ def delete_vnf(request, vnf_id):
 def delete_vnfd(request, vnfd_id):
     LOG.debug("delete_vnfd():vnfd_id=%s",str(vnfd_id))
     tackerclient(request).delete_vnfd(vnfd_id)
+
+def delete_sfc(request, sfc_id):
+    LOG.debug("delete_sfc():sfc_id=%s", str(sfc_id))
+    pass
+#    tackerclient(request).delete_vnf(vnf_id)
+
+def create_sfc(request, sfc_dict):
+    LOG.debug("create_sfc():sfc_dict=%s", str(sfc_dict))
+    sfc_chain = tackerclient(request).create_sfc(body=sfc_dict)
+    print "API.Tacker SFC Instance: " + str(sfc_chain)
+    return sfc_chain
+
+def sfc_list(request, **params):
+    LOG.debug("sfc_list(): params=%s", params)
+    # vnfs = tackerclient(request).list_vnfs(**params).get('vnfs')
+    chain1 = {'service_type': 'sfc'}
+    dummySFC1 = {'name': 'sfc1', 'id': '1', 'description': 'sfc1', 'service_types': [chain1, ]}
+    sfcs = [dummySFC1, ]
+    print "API.Tacker SFCs::" + str(sfcs)
+    return sfcs

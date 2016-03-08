@@ -13,21 +13,14 @@
 # under the License.
 
 
-from django.utils.translation import ugettext_lazy as _
+from django.conf.urls import patterns
+from django.conf.urls import url
 
-import horizon
-
-class Nfvgroup(horizon.PanelGroup):
-    slug = "nfvgroup"
-    name = _("VNF Management")
-    panels = ('vnfcatalog', 'vnfmanager', 'nscatalog')
+from tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog import views
 
 
-class Nfv(horizon.Dashboard):
-    name = _("NFV")
-    slug = "nfv"
-    panels = (Nfvgroup,)  # Add your panels here.
-    default_panel = 'vnfcatalog'  # Specify the slug of the dashboard's default panel.
-
-
-horizon.register(Nfv)
+urlpatterns = patterns(
+    'tacker_horizon.openstack_dashboard.dashboards.nfv.nscatalog.views',
+    url(r'^$', views.IndexView.as_view(), name='index'),
+    url(r'^createsfc$', views.CreateSFCView.as_view(), name='createsfc'),
+)
